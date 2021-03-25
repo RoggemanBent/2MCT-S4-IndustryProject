@@ -1,9 +1,5 @@
 # 2MCT-S4-IndustryProject
 
+### Requirements
 
-
-- Required python packages
-
-Jupyterlab 
- 
-
+>pip install numpy scikit-learn pandas matplotlib seaborn scipy
