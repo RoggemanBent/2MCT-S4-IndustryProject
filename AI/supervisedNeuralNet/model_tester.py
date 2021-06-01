@@ -6,15 +6,17 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-
 img_height = 360
 img_width = 64
 
 treshhold = 0.7
-windowSize = 1
+windowSize = 5
+window = True
 probablities = []
+prediction = 0
+average = 0
 
-classNames = ["Not Golfer", "Golfer"]
+classNames = ["Not Golfswing", "Golfswing"]
 predictedLabel = ""
 
 model = tf.keras.models.load_model('AI\supervisedNeuralNet\model.h5')
@@ -28,17 +30,33 @@ while True:
     
     if succes:
 
-        # normalizedFrame = cv2.resize(frame / 255, (img_width, img_height))
-        # probablities.append(model.predict(np.expand_dims(normalizedFrame, axis = 0))[0])
+        normalizedFrame = cv2.resize(frame, (img_width, img_height))
 
-        if len(probablities) == windowSize:
+        img_array = keras.preprocessing.image.img_to_array(normalizedFrame)
+        img_array = tf.expand_dims(img_array, 0) # Create a batch
 
-            average = np.array(probablities).mean(axis=0)
-            prediction = np.argmax(average)
-            predictedLabel = classNames[prediction]
+        predictions = model.predict(img_array)
+        score = tf.nn.softmax(predictions[0])
 
-        # cv2.putText(frame, predictedLabel, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        if window:
+            probablities.append(score)
+
+            if len(probablities) == windowSize:
+
+                average = np.array(probablities).mean(axis=0)
+                prediction = np.argmax(average)
+                predictedLabel = classNames[prediction]
+                probablities = []
+
+            cv2.putText(frame, f"{predictedLabel} {100 * np.max(average):.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+        else:
+            cv2.putText(frame, f"{classNames[np.argmax(score)]} {100 * np.max(score):.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        
         cv2.imshow('Capture', frame)
 
+        if cv2.waitKey(1) == ord('q'):
+            cv2.destroyAllWindows()
+            break
+
 cap.release()
-cv2.destroyAllWindows()
