@@ -23,7 +23,7 @@ import {
   VideoTrack,
 } from 'react-native-webrtc';
 
-const App = () => {
+const App: () => Node = () => {
   const [stream, setStream] = useState({toURL: () => null});
   const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
   const [isFront, setIsFront] = useState(true);
@@ -105,7 +105,8 @@ const App = () => {
   };
 
   useEffect(async () => {
-    permissionCheck();
+    //permissionCheck();
+    //getStream();
   }, []);
 
   return (
