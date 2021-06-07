@@ -105,7 +105,7 @@ const App: () => Node = () => {
   };
 
   useEffect(async () => {
-    //permissionCheck();
+    permissionCheck();
     //getStream();
   }, []);
 
