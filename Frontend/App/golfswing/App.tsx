@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView, PermissionsAndroid, Text, View} from 'react-native';
 
-import {
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCView,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  registerGlobals,
-  VideoTrack,
-} from 'react-native-webrtc';
+// import {
+//   RTCPeerConnection,
+//   RTCIceCandidate,
+//   RTCSessionDescription,
+//   RTCView,
+//   MediaStream,
+//   MediaStreamTrack,
+//   mediaDevices,
+//   registerGlobals,
+//   VideoTrack,
+// } from 'react-native-webrtc';
 
 //import {io} from 'socket.io-client';
 
