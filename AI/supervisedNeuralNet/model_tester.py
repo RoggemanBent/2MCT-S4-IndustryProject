@@ -19,11 +19,11 @@ average = 0
 classNames = ["Not Golfswing", "Golfswing"]
 predictedLabel = ""
 
-model = tf.keras.models.load_model('AI\supervisedNeuralNet\model.h5')
+model = tf.keras.models.load_model('AI\supervisedNeuralNet\models\main\model.h5')
 model.summary()
 
-
 cap = cv2.VideoCapture(0)
+
 
 while True:
     succes, frame = cap.read()
@@ -46,7 +46,7 @@ while True:
                 average = np.array(probablities).mean(axis=0)
                 prediction = np.argmax(average)
                 predictedLabel = classNames[prediction]
-                probablities = []
+                probablities.pop()
 
             cv2.putText(frame, f"{predictedLabel} {100 * np.max(average):.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 

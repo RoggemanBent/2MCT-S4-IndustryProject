@@ -87,3 +87,4 @@ AI/supervisedNeuralNet/supervisedNeuralNet/models/model/saved_model.pb
 AI/supervisedNeuralNet/supervisedNeuralNet/models/model/variables/variables.data-00000-of-00001
 AI/supervisedNeuralNet/supervisedNeuralNet/models/model/variables/variables.index
 AI/supervisedNeuralNet/model.h5
+AI/supervisedNeuralNet/testModel.h5

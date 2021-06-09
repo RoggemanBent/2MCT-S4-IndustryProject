@@ -11,14 +11,14 @@ from tensorflow.keras.models import Sequential
 
 
 data_dir = pathlib.Path("E:\GolfData\Frames")
-checkpoint_filepath = "AI\supervisedNeuralNet\model.h5"
+checkpoint_filepath = "AI\\supervisedNeuralNet\\testModel.h5"
 
 image_count = len(list(data_dir.glob('*/*.png')))
 print(image_count)
 
 
 # loader parameters
-batch_size = 64
+batch_size = 32
 img_height = 360
 img_width = 64
 
@@ -83,8 +83,13 @@ model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentro
 # Check its architecture
 model.summary()
 
-epochs = 100 
-history = model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[saveModel])
+epochs = 100
+
+try:
+  history = model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[saveModel])
+
+except KeyboardInterrupt:
+  print("\nStopping training...")
 
 
 acc = history.history['accuracy']
@@ -111,4 +116,4 @@ plt.title('Training and Validation Loss')
 
 fig = plt.gcf()
 plt.show()
-fig.savefig("AI\supervisedNeuralNet\model.png")
+fig.savefig("AI\supervisedNeuralNet\\testModel.png")
