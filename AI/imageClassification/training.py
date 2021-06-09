@@ -16,7 +16,7 @@ checkpoint_filepath = "AI\\imageClassification\\models\\testing\\testModel.h5"
 # loader parameters
 batch_size = 32
 img_height = 360
-img_width = 64
+img_width = 640
 
 loss = []
 acc = []

@@ -1,6 +1,8 @@
 import socket
+import pickle
+import cv2
+import struct
 
-HEADERSIZE = 10
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((socket.gethostname(), 5000))
@@ -10,26 +12,33 @@ clientsocket, address = s.accept()
 print(f"Connection from {address} has been established.")
 
 
-new_msg = True
-full_msg = ''
+
+data = b""
+payload_size = struct.calcsize("Q")
 
 while True:
 
-    try:
-        msg = clientsocket.recv(16)
-    except:
-        print(f"Connection to {address} lost. Exiting...")
-        break
+	while len(data) < payload_size:
+		packet = clientsocket.recv(4*1024) # 4K
 
-    if new_msg:
-        msglen = int(msg[:HEADERSIZE])
-        print(f"full message length: {msglen}")
-        new_msg = False
+		if not packet: 
+			break
+		data += packet
+		
+	packed_msg_size = data[:payload_size]
+	data = data[payload_size:]
+	msg_size = struct.unpack("Q", packed_msg_size)[0]
+	
+	while len(data) < msg_size:
+		data += clientsocket.recv(4*1024)
 
-    full_msg += msg.decode("utf-8")
+	frame_data = data[:msg_size]
+	data  = data[msg_size:]
+	frame = pickle.loads(frame_data)
+	cv2.imshow("RECEIVING VIDEO", frame)
 
-    if len(full_msg)-HEADERSIZE == msglen:
-        print("full msg recvd")
-        print(f"Client data: {full_msg[HEADERSIZE:]}")
-        new_msg = True
-        full_msg = ''
+	if cv2.waitKey(1) == ord('q'):
+		break
+
+clientsocket.close()
+cv2.destroyAllWindows()

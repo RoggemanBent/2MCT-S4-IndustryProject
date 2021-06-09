@@ -1,17 +1,31 @@
+import cv2
 import socket
-
-HEADERSIZE = 10
+import pickle
+import struct
+import io
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.connect((socket.gethostname(), 5000))
-msg = "Client sending data!"
 
-while True:
+img_height = 360
+img_width = 640
 
-    print("Sending Data...")
+cap = cv2.VideoCapture(0)
 
-    msg = f"{len(msg):<{HEADERSIZE}}"+msg
+try:
+    while True:
+        succes, frame = cap.read()
+        
+        if succes:
+            
+            frameResized = cv2.resize(frame, (img_width, img_height))
+            frameSer = pickle.dumps(frameResized)
 
-    serverSocket.send(bytes(msg,"utf-8"))
-    print("Done!")
-    msg = input()
+            msg = struct.pack("Q", len(frameSer)) + frameSer
+            serverSocket.sendall(msg)
+
+
+except KeyboardInterrupt:
+    print("Stopping stream...")
+    cap.release()
+    serverSocket.close()

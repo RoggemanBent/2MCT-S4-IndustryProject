@@ -7,7 +7,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
 img_height = 360
-img_width = 64
+img_width = 640
 
 treshhold = 0.7
 windowSize = 5
