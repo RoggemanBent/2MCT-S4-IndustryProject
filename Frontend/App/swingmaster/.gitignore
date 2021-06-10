@@ -1,21 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
-
-### VisualStudioCode ###
-.vscode/*
-.vs
-.vscode
-!.vscode/tasks.json
-!.vscode/launch.json
-*.code-workspace
-
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
-
 # OSX
 #
 .DS_Store
@@ -75,10 +57,3 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
-
-.DS_Store
-
-.env
-
-AI/imageClassification/models/*/*.h5
-AI/imageClassification/models/*/logs/

@@ -2,4 +2,4 @@
 
 ### Requirements
 
->pip install numpy scikit-learn pandas matplotlib seaborn scipy tensorflow 
+>numpy matplotlib scipy tensorflow opencv-python pathlib
