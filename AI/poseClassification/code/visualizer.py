@@ -73,11 +73,12 @@ class PoseClassificationVisualizer(object):
       font_size = int(output_height * self._counter_font_size)
       font_request = requests.get(self._counter_font_path, allow_redirects=True)
       self._counter_font = ImageFont.truetype(io.BytesIO(font_request.content), size=font_size)
-    output_img_draw.text((output_width * self._counter_location_x,
-                          output_height * self._counter_location_y),
-                         str(repetitions_count),
-                         font=self._counter_font,
-                         fill=self._counter_font_color)
+    if not pose_classification_filtered == None:
+        output_img_draw.text((output_width * self._counter_location_x,
+                            output_height * self._counter_location_y),
+                            str(pose_classification_filtered["positive"]),
+                            font=self._counter_font,
+                            fill=self._counter_font_color)
 
     return output_img
 

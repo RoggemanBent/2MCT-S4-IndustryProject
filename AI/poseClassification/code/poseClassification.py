@@ -84,6 +84,8 @@ class PoseClassifier(object):
       with open(os.path.join(pose_samples_folder, file_name)) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=file_separator)
         for row in csv_reader:
+          if len(row) == 0:
+            continue
           assert len(row) == n_landmarks * n_dimensions + 1, 'Wrong number of values: {}'.format(len(row))
           landmarks = np.array(row[1:], np.float32).reshape([n_landmarks, n_dimensions])
           pose_samples.append(PoseSample(
