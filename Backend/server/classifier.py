@@ -1,3 +1,4 @@
+import cv2
 import threading
 import numpy as np
 import tensorflow as tf
@@ -9,10 +10,14 @@ class Classifier(threading.Thread):
     def __init__(self, messageQ):
         threading.Thread.__init__(self)
 
+        self.img_width = 320
+        self.img_height = 180
+
         self.running = True
         self.treshhold = 0.7
-        self.windowSize = 5
-        self.window = False
+        self.windowSize = 23 * 3 # 23 fps times 3 seconds
+        self.frames = []
+        self.window = True
         self.probablities = []
 
         self.messageQ = messageQ
@@ -23,26 +28,35 @@ class Classifier(threading.Thread):
     def run(self):
 
         while self.running:
+
             image = self.messageQ.get()
+            self.frames.append(image)
+
             img_array = tf.expand_dims(image, 0) # Create a batch
 
             predictions = self.model.predict(img_array)
             score = tf.nn.softmax(predictions[0])
 
-            if self.window:
-                self.probablities.append(score)
+            self.probablities.append(score)
 
-                if len(self.probablities) == self.windowSize:
+            if len(self.probablities) == self.windowSize:
 
-                    average = np.array(self.probablities).mean(axis=0)
-                    certainty = np.argmax(average)
-                    predictedLabel = self.classNames[certainty]
-                    self.probablities.pop()
+                average = np.array(self.probablities).mean(axis=0)
+                prediction = np.argmax(average)
+                predictedLabel = self.classNames[prediction]
 
-                    print(f"\r{predictedLabel} width {certainty} certainty.      ", end="")
-            
-            else:
-                certainty = np.argmax(score)
-                predictedLabel = self.classNames[certainty]
+                if predictedLabel == "Golfswing" and average >= self.treshhold:
+                    self.saveClip()
 
-                print(f"\r{predictedLabel} width {score[certainty]} certainty.      ", end="")            
+                self.frames.pop(0)
+                self.probablities.pop(0)
+                print(f"\r{predictedLabel} width {score[prediction]} certainty.      ", end="")
+        
+
+        def saveClip(self):
+
+            clip = cv2.VideoWriter('Backend\server\out\swing.mp4',-1,1, (self.img_width, self.img_height))
+
+            for frame in self.frames:
+                clip.write(frame)
+            clip.release()

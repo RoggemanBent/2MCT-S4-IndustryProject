@@ -42,9 +42,6 @@ class ClientHandler(threading.Thread):
                     packet = self.socketclient.recv(4*1024) # 4K
                 except:
                     self.socketclient.close()
-                    self.classifier.running = False
-                    self.running = False
-                    self.classifier.join()
                     print("Exiting Clienthandler.")
                     break
 
@@ -59,9 +56,6 @@ class ClientHandler(threading.Thread):
                     data += self.socketclient.recv(4*1024) # 4K
                 except:
                     self.socketclient.close()
-                    self.classifier.running = False
-                    self.running = False
-                    self.classifier.join()
                     print("Exiting Clienthandler.")
                     break
 

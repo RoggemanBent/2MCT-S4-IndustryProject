@@ -2,7 +2,6 @@ import cv2
 import socket
 import pickle
 import struct
-import io
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.connect((socket.gethostname(), 9999))
@@ -26,7 +25,7 @@ while True:
 
         cv2.imshow("Capture", frameResized)
 
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKey(10) == ord('q'):
             cap.release()
             cv2.destroyAllWindows()
             serverSocket.close()

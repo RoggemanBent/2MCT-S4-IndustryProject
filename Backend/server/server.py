@@ -10,19 +10,16 @@ from Backend.server.clienthandler import ClientHandler
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serversocket.bind((socket.gethostname(), 9999))
 serversocket.listen(5)
-print("SERVER STARTED")       
+print("SERVER STARTED")
 
 
-while True:
-
-    try:
+try:
+    while True:
         clientSocket, address = serversocket.accept()
 
-        print('Connected to: ' + address[0] + ':' + str(address[1]))
+        print('\nConnected to: ' + address[0] + ':' + str(address[1]))
         clh = ClientHandler(clientSocket)
         clh.start()
 
-    except Exception as ex:
-        print(ex)
-        serversocket.close()
-        break
+except KeyboardInterrupt:
+    serversocket.close()
