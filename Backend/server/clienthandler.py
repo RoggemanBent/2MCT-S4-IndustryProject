@@ -6,6 +6,8 @@ import threading
 from queue import Queue
 from Backend.server.classifier import Classifier
 
+
+
 class ClientHandler(threading.Thread):
 
     numbers_clienthandlers = 0
