@@ -7,7 +7,7 @@ from queue import Queue
 class Classifier(threading.Thread):
 
     def __init__(self, messageQ):
-
+        threading.Thread.__init__(self)
         self.treshhold = 0.7
         self.windowSize = 5
         self.window = True
@@ -19,14 +19,16 @@ class Classifier(threading.Thread):
         self.classNames = ["Not Golfswing", "Golfswing"]
         self.predictedLabel = ""
 
-        self.model = tf.keras.models.load_model('AI\supervisedNeuralNet\models\main\model.h5')
+        self.model = tf.keras.models.load_model('AI\imageClassification\models\main\model.h5')
+
+        self.start()
 
     def run(self):
 
         image = self.messageQ.get()
         img_array = tf.expand_dims(image, 0) # Create a batch
 
-        self.predictions = model.predict(img_array)
+        self.predictions = self.model.predict(img_array)
         score = tf.nn.softmax(self.predictions[0])
 
         if self.window:
@@ -35,7 +37,8 @@ class Classifier(threading.Thread):
             if len(self.probablities) == windowSize:
 
                 average = np.array(self.probablities).mean(axis=0)
-                predictedLabel = classNames[np.argmax(average)]
+                certainty = np.argmax(average)
+                predictedLabel = classNames[certainty]
                 self.probablities.pop()
 
-            print(f"\r{predictedLabel}      ", end="")
+            print(f"\r{predictedLabel} width {certainty} certainty.      ", end="")
