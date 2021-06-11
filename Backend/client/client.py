@@ -7,7 +7,7 @@ import io
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.connect((socket.gethostname(), 9999))
 
-img_height = 360
+img_height = 320
 img_width = 640
 
 cap = cv2.VideoCapture(0)

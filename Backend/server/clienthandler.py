@@ -12,20 +12,27 @@ class ClientHandler(threading.Thread):
 
     def __init__(self, socketclient):
         threading.Thread.__init__(self)
+
+        self.img_height = 180
+        self.img_width = 320
+        self.running = True
+
         # connectie with client
         self.socketclient = socketclient
         # id clienthandler
         ClientHandler.numbers_clienthandlers += 1
+
         self.id = ClientHandler.numbers_clienthandlers
         self.init_messageQ()
         self.classifier = Classifier(self.messageQ)
+        self.classifier.start()
 
 
     def run(self):
         data = b""
         payload_size = struct.calcsize("Q")
 
-        while True:
+        while self.running:
 
             while len(data) < payload_size:
 
@@ -33,6 +40,10 @@ class ClientHandler(threading.Thread):
                     packet = self.socketclient.recv(4*1024) # 4K
                 except:
                     self.socketclient.close()
+                    self.classifier.running = False
+                    self.running = False
+                    self.classifier.join()
+                    print("Exiting Clienthandler.")
                     break
 
                 data += packet
@@ -42,19 +53,22 @@ class ClientHandler(threading.Thread):
             msg_size = struct.unpack("Q", packed_msg_size)[0]
             
             while len(data) < msg_size:
-                data += self.socketclient.recv(4*1024)
+                try:
+                    data += self.socketclient.recv(4*1024) # 4K
+                except:
+                    self.socketclient.close()
+                    self.classifier.running = False
+                    self.running = False
+                    self.classifier.join()
+                    print("Exiting Clienthandler.")
+                    break
 
             frame_data = data[:msg_size]
             data  = data[msg_size:]
             frame = pickle.loads(frame_data)
-
-            self.imToClassifier(frame)
+            frameResized = cv2.resize(frame, (self.img_width, self.img_height))
+            self.messageQ.put(frameResized)
 
 
     def init_messageQ(self):
         self.messageQ = Queue()
-        self.thread_listener_queue = threading.Thread(target=self.imToClassifier, name="Image transfer thread", daemon=True)
-        self.thread_listener_queue.start()
-
-    def imToClassifier(self, im):
-        message = self.messageQ.put(im)

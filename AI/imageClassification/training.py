@@ -11,12 +11,12 @@ from tensorflow.keras.models import Sequential
 
 
 data_dir = pathlib.Path("E:\GolfData\Frames")
-checkpoint_filepath = "AI\\imageClassification\\models\\testing\\testModel.h5"
+checkpoint_filepath = "AI\\imageClassification\\models\\testing\\model.h5"
 
 # loader parameters
 batch_size = 32
-img_height = 360
-img_width = 640
+img_height = 180
+img_width = 320
 
 loss = []
 acc = []
@@ -56,15 +56,15 @@ model = Sequential([
   layers.experimental.preprocessing.RandomRotation(0.1),
   layers.experimental.preprocessing.RandomZoom(0.1),
 
-  layers.Conv2D(128, 3, padding='same', activation='relu'),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
-  layers.Conv2D(128, 3, padding='same', activation='relu'),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
-  layers.Conv2D(128, 3, padding='same', activation='relu'),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
   layers.Dropout(0.2),
   layers.Flatten(),
-  layers.Dense(128, activation='relu'),
+  layers.Dense(64, activation='relu'),
   layers.Dense(2)
 ])
 

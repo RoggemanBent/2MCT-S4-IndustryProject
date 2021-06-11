@@ -17,11 +17,12 @@ while True:
 
     try:
         clientSocket, address = serversocket.accept()
+
+        print('Connected to: ' + address[0] + ':' + str(address[1]))
+        clh = ClientHandler(clientSocket)
+        clh.start()
+
     except Exception as ex:
         print(ex)
         serversocket.close()
         break
-
-    print('Connected to: ' + address[0] + ':' + str(address[1]))
-    clh = ClientHandler(clientSocket)
-    clh.start()
