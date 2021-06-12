@@ -80,7 +80,5 @@ buck-out/
 
 .env
 
-AI/imageClassification/models/*/*.h5
-AI/imageClassification/models/*/logs/
+AI/imageClassification/models/*/logs/*
 Backend/server/__pycache__
-

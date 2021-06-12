@@ -13,7 +13,7 @@ height = 360
 mat = scipy.io.loadmat(data_path)
 numvideos = len(mat["golfDB"][0])
 
-def GetFrames(negatives = 50):
+def GetFrames(negatives = 300):
 
     negatives //= 2
     positivesDone = 0

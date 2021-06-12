@@ -14,15 +14,9 @@ data_dir = pathlib.Path("E:\GolfData\Frames")
 checkpoint_filepath = "AI\\imageClassification\\models\\testing\\model.h5"
 
 # loader parameters
-batch_size = 32
+batch_size = 16
 img_height = 180
 img_width = 320
-
-loss = []
-acc = []
-val_loss = []
-val_acc = []
-
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
   data_dir,
@@ -44,8 +38,8 @@ val_ds = tf.keras.preprocessing.image_dataset_from_directory(
 class_names = train_ds.class_names
 
 AUTOTUNE = tf.data.AUTOTUNE
-train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
-val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+train_ds = train_ds.shuffle(1000).prefetch(buffer_size=AUTOTUNE)
+val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 
 
 model = Sequential([
