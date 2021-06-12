@@ -2,8 +2,6 @@ import cv2
 import threading
 import numpy as np
 import tensorflow as tf
-from queue import Queue
-
 
 class Classifier(threading.Thread):
 
@@ -15,7 +13,11 @@ class Classifier(threading.Thread):
 
         self.running = True
         self.treshhold = 0.7
-        self.windowSize = 23 * 3 # 23 fps times 3 seconds
+
+        # voor mijn laptop webcam is fps 15
+        self.windowSize = 15 * 3 # 23 fps times 3 seconds
+
+
         self.frames = []
         self.window = True
         self.probablities = []
@@ -48,15 +50,22 @@ class Classifier(threading.Thread):
                 if predictedLabel == "Golfswing" and average >= self.treshhold:
                     self.saveClip()
 
+                    # na het saven van de clip de buffers leegmaken
+                    # anders houden we rekening met al gesavede frames
+                    self.frames = []
+                    self.probablities = []
+
                 self.frames.pop(0)
                 self.probablities.pop(0)
                 print(f"\r{predictedLabel} width {score[prediction]} certainty.      ", end="")
         
 
-        def saveClip(self):
+    def saveClip(self):
 
-            clip = cv2.VideoWriter('Backend\server\out\swing.mp4',-1,1, (self.img_width, self.img_height))
+        clip = cv2.VideoWriter('Backend\server\out\swing.mp4',-1,1, (self.img_width, self.img_height))
 
-            for frame in self.frames:
-                clip.write(frame)
-            clip.release()
+        for frame in self.frames:
+            clip.write(frame)
+        clip.release()
+
+        # hier moet dan een methode ofzo gecalled worden die de clip op een google drive zet
