@@ -2,6 +2,8 @@ import cv2
 import threading
 import numpy as np
 import tensorflow as tf
+import json
+import requests
 
 class Classifier(threading.Thread):
 
@@ -25,6 +27,9 @@ class Classifier(threading.Thread):
         self.messageQ = messageQ
         self.classNames = ["Not Golfswing", "Golfswing"]
         self.model = tf.keras.models.load_model('AI\imageClassification\models\main\model.h5')
+
+        self.drive_headers = {"Authorization": "Bearer Authkey"} # Vraag auth key aan: https://developers.google.com/oauthplayground/
+        self.drive_count = 0
 
 
     def run(self):
@@ -62,10 +67,22 @@ class Classifier(threading.Thread):
 
     def saveClip(self):
 
-        clip = cv2.VideoWriter('Backend\server\out\swing.mp4',-1,1, (self.img_width, self.img_height))
+        clip = cv2.VideoWriter('./output/output.mp4',-1,1, (self.img_width, self.img_height))
 
         for frame in self.frames:
             clip.write(frame)
         clip.release()
 
-        # hier moet dan een methode ofzo gecalled worden die de clip op een google drive zet
+
+        para = {"name": f"positive_clip{self.drive_count}.mp4"}
+        files = {
+            'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
+            'file': open("./output/output.mp4", "rb") # lokaal path naar video
+        }
+        r = requests.post(
+        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        headers=self.drive_headers,
+        files=files
+        )
+
+        self.drive_count += 1
