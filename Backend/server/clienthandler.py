@@ -12,7 +12,7 @@ class ClientHandler(threading.Thread):
 
     numbers_clienthandlers = 0
 
-    def __init__(self, socketclient):
+    def __init__(self, socketclient, fps, treshhold, gDriveAuthKey):
         threading.Thread.__init__(self)
 
         self.img_height = 180
@@ -26,7 +26,7 @@ class ClientHandler(threading.Thread):
 
         self.id = ClientHandler.numbers_clienthandlers
         self.init_messageQ()
-        self.classifier = Classifier(self.messageQ)
+        self.classifier = Classifier(self.messageQ, fps, treshhold, gDriveAuthKey)
         self.classifier.start()
 
 
