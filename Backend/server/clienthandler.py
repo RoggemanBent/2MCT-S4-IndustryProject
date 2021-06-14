@@ -4,8 +4,7 @@ import cv2
 import struct
 import threading
 from queue import Queue
-from Backend.server.classifier import Classifier
-
+from classifier import Classifier
 
 
 class ClientHandler(threading.Thread):

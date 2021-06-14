@@ -1,12 +1,11 @@
 FROM tensorflow/tensorflow:latest-py3
 
 COPY . .
-COPY requirements.txt  requirements.txt
 
-RUN apt-get update -y && apt-get install -y python3-pip python-dev
-RUN pip3 install -r requirements.txt
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6 -y
+RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python3","./server.py"]
+ENTRYPOINT ["python3", "./server.py"]
 
-EXPOSE 999
-
+EXPOSE 9999

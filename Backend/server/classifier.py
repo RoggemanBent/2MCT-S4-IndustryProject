@@ -5,6 +5,7 @@ import tensorflow as tf
 import json
 import requests
 
+
 class Classifier(threading.Thread):
 
     def __init__(self, messageQ, fps, treshhold, gDriveAuthKey):
@@ -27,7 +28,7 @@ class Classifier(threading.Thread):
 
         self.messageQ = messageQ
         self.classNames = ["Not Golfswing", "Golfswing"]
-        self.model = tf.keras.models.load_model('AI\imageClassification\models\main\model.h5')
+        self.model = tf.keras.models.load_model('model.h5')
 
         self.drive_headers = {"Authorization": f"Bearer {gDriveAuthKey}"} # Vraag auth key aan: https://developers.google.com/oauthplayground/
         self.drive_count = 0
@@ -69,7 +70,7 @@ class Classifier(threading.Thread):
     def saveClip(self):
         
         try:
-            clip = cv2.VideoWriter("Backend\server\out\\out.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps=self.fps, frameSize = (self.img_width, self.img_height))
+            clip = cv2.VideoWriter("out\\out.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps=self.fps, frameSize = (self.img_width, self.img_height))
 
             for frame in self.frames:
                 clip.write(frame)
@@ -82,7 +83,7 @@ class Classifier(threading.Thread):
             para = {"name": f"positive_clip{self.drive_count}.mp4"}
             files = {
                 'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
-                'file': open("Backend\server\out\\out.mp4", "rb") # lokaal path naar video
+                'file': open("out\\out.mp4", "rb") # lokaal path naar video
             }
             r = requests.post(
             "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",

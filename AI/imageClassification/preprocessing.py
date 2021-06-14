@@ -6,6 +6,7 @@ videos_path = "E:\\GolfData\\Videos\\"
 
 frame_paths = {'positives': "E:\\GolfData\\Frames\\Positives\\", 'negatives': "E:\\GolfData\\Frames\\Negatives\\"}
 
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 fps = 120
 width = 640
 height = 360
@@ -13,7 +14,7 @@ height = 360
 mat = scipy.io.loadmat(data_path)
 numvideos = len(mat["golfDB"][0])
 
-def GetFrames(negatives = 300):
+def GetFrames(negatives = 20):
 
     negatives //= 2
     positivesDone = 0
@@ -34,7 +35,7 @@ def GetFrames(negatives = 300):
             framerate = cap.get(cv2.CAP_PROP_FPS)           # Frame rate
 
             startNegatives = framenumbers[0] - negatives
-            endNegatives = framenumbers[-1] + negatives
+            endNegatives = framenumbers[-1] - negatives
 
 
             for framenum in range(startNegatives, framenumbers[0]):
@@ -52,9 +53,9 @@ def GetFrames(negatives = 300):
                 else:
                     print("Could not go to frame " + str(framenum) + " in " + videoname)
 
-            for i in range(framenumbers[0], framenumbers[-1]):
+            for i in range(10):
 
-                    framenum = i
+                    framenum = framenumbers[i]
                     if cap.set(cv2.CAP_PROP_POS_FRAMES, framenum):
                         ret, frame = cap.read()
                         if ret:
@@ -88,6 +89,5 @@ def GetFrames(negatives = 300):
                     print("Could not go to frame " + str(framenum) + " in " + videoname)
 
     print()
-
 
 GetFrames()

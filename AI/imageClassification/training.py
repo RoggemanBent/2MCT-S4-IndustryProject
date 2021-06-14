@@ -6,6 +6,7 @@ import pydot
 
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.keras import regularizers
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.models import Sequential
 
@@ -14,7 +15,7 @@ data_dir = pathlib.Path("E:\GolfData\Frames")
 checkpoint_filepath = "AI\\imageClassification\\models\\testing\\model.h5"
 
 # loader parameters
-batch_size = 16
+batch_size = 32
 img_height = 180
 img_width = 320
 
@@ -41,35 +42,44 @@ AUTOTUNE = tf.data.AUTOTUNE
 train_ds = train_ds.shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 
-
 model = Sequential([
 
     # preprocessing and feature augmentation
   layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-  layers.experimental.preprocessing.RandomFlip("horizontal", input_shape=(img_height, img_width, 3)),
+  layers.experimental.preprocessing.RandomFlip("horizontal"),
   layers.experimental.preprocessing.RandomRotation(0.1),
   layers.experimental.preprocessing.RandomZoom(0.1),
 
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
-  layers.MaxPooling2D(),
-  layers.Dropout(0.2),
-  layers.Flatten(),
-  layers.Dense(64, activation='relu'),
-  layers.Dense(2)
+  layers.Conv2D(64, (3,3), padding='same', activation='relu'),
+  layers.MaxPooling2D(2, 2),
+
+  tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+
+  tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+
+  tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+
+  tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2,2),
+
+  tf.keras.layers.Flatten(),
+
+  layers.Dense(512, activation='relu'),
+
+  tf.keras.layers.Dense(1, activation='sigmoid')
 ])
 
 
 # This callback will stop the training when there is no improvement in
-# the loss for three consecutive epochs.
-earlyStop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
+# the loss for five consecutive epochs.
+earlyStop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 saveModel = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath, save_weights_only=False, monitor='val_loss', mode='min', save_best_only=True)
 tensorboard = tf.keras.callbacks.TensorBoard(log_dir="AI\\imageClassification\\models\\testing\\logs", histogram_freq=1)
 
-model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Check its architecture
 model.summary()
@@ -77,6 +87,6 @@ model.summary()
 epochs = 100
 
 try:
-  history = model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[saveModel, tensorboard])
+  history = model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=[saveModel, tensorboard, earlyStop])
 except KeyboardInterrupt:
   print("\nStopping training...")

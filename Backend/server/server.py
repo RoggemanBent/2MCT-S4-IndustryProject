@@ -37,12 +37,10 @@ except ValueError as e:
     print(e)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-from pathlib import Path
-sys.path[0] = str(Path(sys.path[0]).parent.parent)
 
 import socket
 import threading
-from Backend.server.clienthandler import ClientHandler
+from clienthandler import ClientHandler
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serversocket.bind((socket.gethostname(), 9999))
