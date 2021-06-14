@@ -66,23 +66,29 @@ class Classifier(threading.Thread):
         
 
     def saveClip(self):
+        
+        try:
+            clip = cv2.VideoWriter('./output/output.mp4',-1,1, (self.img_width, self.img_height))
 
-        clip = cv2.VideoWriter('./output/output.mp4',-1,1, (self.img_width, self.img_height))
+            for frame in self.frames:
+                clip.write(frame)
+            clip.release()
+        except Exception as e:
+            print(f"Problem with writing video: {str(e)}")
 
-        for frame in self.frames:
-            clip.write(frame)
-        clip.release()
 
-
-        para = {"name": f"positive_clip{self.drive_count}.mp4"}
-        files = {
-            'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
-            'file': open("./output/output.mp4", "rb") # lokaal path naar video
-        }
-        r = requests.post(
-        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-        headers=self.drive_headers,
-        files=files
-        )
+        try:
+            para = {"name": f"positive_clip{self.drive_count}.mp4"}
+            files = {
+                'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
+                'file': open("./output/output.mp4", "rb") # lokaal path naar video
+            }
+            r = requests.post(
+            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+            headers=self.drive_headers,
+            files=files
+            )
+        except Exception as e:
+            print(f"Problem with saving video to drive: {str(e)}")
 
         self.drive_count += 1
