@@ -1,0 +1,9 @@
+FROM tensorflow/tensorflow:latest-py3
+
+
+RUN apt-get update -y && apt-get install -y python3-pip python-dev
+
+
+
+EXPOSE 999
+
