@@ -45,12 +45,7 @@ val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 model = Sequential([
 
     # preprocessing and feature augmentation
-  layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-  layers.experimental.preprocessing.RandomFlip("horizontal"),
-  layers.experimental.preprocessing.RandomRotation(0.1),
-  layers.experimental.preprocessing.RandomZoom(0.1),
-
-  layers.Conv2D(64, (3,3), padding='same', activation='relu'),
+  layers.Conv2D(64, (3,3), activation='relu', input_shape=(img_height, img_width, 3)),
   layers.MaxPooling2D(2, 2),
 
   tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
@@ -68,7 +63,7 @@ model = Sequential([
   tf.keras.layers.Flatten(),
 
   layers.Dense(512, activation='relu'),
-
+  layers.Dropout(0.2),
   tf.keras.layers.Dense(1, activation='sigmoid')
 ])
 
