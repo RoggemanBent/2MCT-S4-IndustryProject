@@ -89,19 +89,5 @@ def GetFrames(negatives = 300):
 
     print()
 
-# def NormalizeFrames():
-    
-#     totalImages = 0
-#     for dirIndx, dir in enumerate(frame_paths):
-
-#         imCount = len(os.listdir(dir))
-#         totalImages += imCount
-#         for indx, im in enumerate(os.listdir(dir)):
-#             img = cv2.imread(frame_paths[dirIndx] + im)
-#             norm = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-#             cv2.imwrite(out_paths[dirIndx] + im, norm)
-#             print(f"Normalized {round((indx / imCount) * 100, 1)} % frames of {out_paths[dirIndx]}         \r", end='')
-#         print()
-#     print(f"Done normalizing {totalImages} frames.")
 
 GetFrames()

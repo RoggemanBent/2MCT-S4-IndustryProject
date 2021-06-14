@@ -6,8 +6,8 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-img_height = 360
-img_width = 640
+img_height = 180
+img_width = 320
 
 treshhold = 0.7
 windowSize = 5
@@ -19,7 +19,7 @@ average = 0
 classNames = ["Not Golfswing", "Golfswing"]
 predictedLabel = ""
 
-model = tf.keras.models.load_model('AI\supervisedNeuralNet\models\main\model.h5')
+model = tf.keras.models.load_model('AI\imageClassification\models\main\model.h5')
 model.summary()
 
 cap = cv2.VideoCapture(0)
