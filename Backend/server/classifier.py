@@ -43,18 +43,22 @@ class Classifier(threading.Thread):
 
             img_array = tf.expand_dims(image, 0) # Create a batch
 
-            predictions = self.model.predict(img_array)
-            score = tf.nn.softmax(predictions[0])
+            prediction = self.model.predict(img_array)[0]
 
-            self.probablities.append(score)
+            self.probablities.append(prediction)
 
             if len(self.probablities) == self.windowSize:
 
                 average = np.array(self.probablities).mean(axis=0)
-                prediction = np.argmax(average)
-                predictedLabel = self.classNames[prediction]
 
-                if predictedLabel == "Golfswing" and average[prediction] >= self.treshhold:
+                if average > 0.5:
+                    confidence = average * 100
+                    predictedLabel = "Golfswing"
+                else:
+                    confidence = 100 - (average * 100)
+                    predictedLabel = "Not Golfswing"
+
+                if predictedLabel == "Golfswing" and average >= self.treshhold:
                     self.saveClip()
 
                     # na het saven van de clip de buffers leegmaken
@@ -64,7 +68,7 @@ class Classifier(threading.Thread):
                 else:
                     self.frames.pop(0)
                     self.probablities.pop(0)
-                    print(f"\r{predictedLabel} width {score[prediction]} certainty.      ", end="")
+                    print(f"\r{predictedLabel} width {average} certainty.      ", end="")
         
 
     def saveClip(self):
