@@ -40,16 +40,20 @@ const Gallery = ({ navigation }: any) => {
 
   const getVideos = async () => {
     const album = await MediaLibrary.getAlbumAsync('swingmaster');
-    const albumVideos = await MediaLibrary.getAssetsAsync({
-      album: album,
-      mediaType: MediaType.video,
-    });
-    const cardsArray = [];
-    for (let i = 0; i < albumVideos.assets.length; i++) {
-      const card = await createVideoCards(albumVideos.assets[i]);
-      cardsArray.unshift(card);
+    if (album !== null) {
+      const albumVideos = await MediaLibrary.getAssetsAsync({
+        album: album,
+        mediaType: MediaType.video,
+      });
+
+      const cardsArray = [];
+      for (let i = 0; i < albumVideos.assets.length; i++) {
+        const card = await createVideoCards(albumVideos.assets[i]);
+        cardsArray.unshift(card);
+      }
+      setGallery(cardsArray);
     }
-    setGallery(cardsArray);
+    setGallery(null);
   };
 
   const createVideoCards = async (v: any) => {
@@ -186,7 +190,16 @@ const Gallery = ({ navigation }: any) => {
             gallery
           )
         ) : (
-          <Text>No videos found</Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              marginTop: 30,
+            }}
+          >
+            No videos found
+          </Text>
         )}
       </ScrollView>
     </SafeAreaView>
