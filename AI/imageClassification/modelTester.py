@@ -31,7 +31,7 @@ while True:
     
     if succes:
 
-        normalizedFrame = cv2.resize(frame, (img_width, img_height))
+        normalizedFrame = cv2.resize(frame, (img_height, img_width))
 
         img_array = keras.preprocessing.image.img_to_array(normalizedFrame)
         img_array = tf.expand_dims(img_array, 0) # Create a batch
@@ -45,21 +45,19 @@ while True:
 
                 average = np.array(probablities).mean(axis=0)[0]
 
-                if average > 0.5:
-                    confidence = average * 100
+                if average > 0.39:
                     predictedLabel = "Golfswing"
                 else:
-                    confidence = 100 - (average * 100)
                     predictedLabel = "Not Golfswing"
 
                 probablities.pop()
 
             
 
-            cv2.putText(frame, f"{predictedLabel} {confidence:.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, f"{predictedLabel} {average:.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
         else:
-            cv2.putText(frame, f"{predictedLabel} {confidence:.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, f"{predictedLabel} {average:.2f}% confidence.", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         
         cv2.imshow('Capture', frame)
 
