@@ -1,135 +1,63 @@
-import React, {useEffect, useState} from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  PermissionsAndroid,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
-import {
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCView,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  registerGlobals,
-  VideoTrack,
-} from 'react-native-webrtc';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-const App: () => Node = () => {
-  const [stream, setStream] = useState({toURL: () => null});
-  const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
-  const [isFront, setIsFront] = useState(true);
+import firebase from 'firebase';
+import 'firebase/auth';
+import { firebaseConfig } from './utils/firebaseConfig';
 
-  // const socket = io('10.2.167.3:5000');
+import Login from './screens/login/index';
+import Singup from './screens/login/signup';
+import PasswordRecovery from './screens/login/passwordRecovery';
+import HomeScreen from './screens/home/index';
+import { neutral } from './styles/colors/colors';
 
-  const permissionCheck = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'App Camera Permission',
-          message: 'Needs access to your camera ',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        setPermissionsGranted(true);
-        getStream();
-      } else {
-        setPermissionsGranted(false);
-      }
-    } catch (err) {
-      console.warn(err);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app();
+}
+const Stack = createStackNavigator();
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user !== null) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
-  };
-
-  const getStream = () => {
-    const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
-    const pc = new RTCPeerConnection(configuration);
-    if (permissionsGranted) {
-      mediaDevices.enumerateDevices().then(sourceInfos => {
-        let videoSourceId;
-        for (let i = 0; i < sourceInfos.length; i++) {
-          const sourceInfo = sourceInfos[i];
-          if (
-            sourceInfo.kind == 'videoinput' &&
-            sourceInfo.facing == (isFront ? 'front' : 'environment')
-          ) {
-            videoSourceId = sourceInfo.deviceId;
-          }
-        }
-        mediaDevices
-          .getUserMedia({
-            audio: true,
-            video: {
-              flex: 1,
-              frameRate: 30,
-              facingMode: isFront ? 'user' : 'environment',
-              deviceId: videoSourceId,
-            },
-          })
-          .then((res: any) => {
-            setStream(res);
-            console.log(stream === null);
-
-            if (stream === null) {
-              console.log('rerun');
-
-              getStream();
-            }
-          })
-          .catch((error: any) => {
-            console.error(error);
-          });
-      });
-      pc.createOffer().then(desc => {
-        pc.setLocalDescription(desc).then(() => {
-          // Send pc.localDescription to peer
-        });
-      });
-
-      pc.onicecandidate = function (event) {
-        // send event.candidate to peer
-      };
-    }
-  };
-
-  useEffect(async () => {
-    permissionCheck();
-    //getStream();
-  }, []);
+  });
 
   return (
-    <SafeAreaView>
-      <View>
-        <Text>App.js</Text>
-        {permissionsGranted && stream !== null ? (
-          (console.log(stream.toURL()),
-          (
-            <RTCView
-              zOrder={2}
-              mirror={true}
-              objectFit={'cover'}
-              style={{width: 640, height: 480, background: 'red'}}
-              streamURL={stream.toURL()}
-            />
-          ))
-        ) : (
-          <Text>Permission required</Text>
-        )}
+    <NavigationContainer>
+      <View
+        style={{
+          backgroundColor: neutral[200],
+        }}
+      >
+        <StatusBar style="light" />
       </View>
-    </SafeAreaView>
+      <Stack.Navigator headerMode="none">
+        {isLoggedIn ? (
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="SignIn" component={Login} />
+            <Stack.Screen name="SignUp" component={Singup} />
+            <Stack.Screen
+              name="PasswordRecovery"
+              component={PasswordRecovery}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-};
-
-export default App;
+}
