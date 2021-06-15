@@ -52,6 +52,7 @@ const Gallery = ({ navigation }: any) => {
         cardsArray.unshift(card);
       }
       setGallery(cardsArray);
+      return;
     }
     setGallery(null);
   };
