@@ -152,7 +152,7 @@ const Detail = ({ route, navigation }: any) => {
             }}
           >
             {isUploading ? (
-              <ActivityIndicator size="large" color={neutral[900]} />
+              <ActivityIndicator size="small" color={neutral[900]} />
             ) : (
               <Text style={inputs.buttonText}>Analyze video</Text>
             )}
