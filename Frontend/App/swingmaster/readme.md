@@ -14,8 +14,8 @@
 
 ## Install expoGo
 
-App store: https://itunes.apple.com/app/apple-store/id982107779
-Google play: https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=www
+- App store: https://itunes.apple.com/app/apple-store/id982107779
+- Google play: https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=www
 
 ## Run project
 
